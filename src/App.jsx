@@ -7,9 +7,9 @@ function App() {
   return (
     <Router>
       <Routes>
-            <Route path="/" element={<Driver/>} />
+            <Route path="/" element={<Login/>} />
             <Route path="/admin" element={<Admin/>} />
-            <Route path="/logins" element={<Login/>} />
+            <Route path="/logins" element={<Driver/>} />
             </Routes>
     </Router>
   );
