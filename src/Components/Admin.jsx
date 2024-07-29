@@ -1,50 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import  { useState } from 'react';
+import '../index.css'; 
 
-function Admin({ user }) {
-  const [applications, setApplications] = useState([]);
+const mockApplications = [
+  { id: 1, name: 'John Doe', email: 'john@example.com', license: 'ABC123', status: 'pending' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com', license: 'XYZ789', status: 'pending' },
 
-  useEffect(() => {
-    const fetchApplications = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/applications`);
-      const data = await response.json();
-      setApplications(data);
-    };
+];
 
-    fetchApplications();
-  }, []);
+const Admin = () => {
+  const [applications, setApplications] = useState(mockApplications);
+  const [message, setMessage] = useState('');
 
-  const handleStatusChange = async (id, status) => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/applications/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status }),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      setApplications(applications.map(app => app._id === id ? data : app));
-    } else {
-      alert(data.message);
-    }
+  const handleAction = (id, action) => {
+    setApplications(applications.map(app => 
+      app.id === id ? { ...app, status: action } : app
+    ));
+    setMessage(`Application ${action} successfully!`);
   };
 
   return (
-    <div>
-      <h2>Welcome, {user.name}</h2>
-      <h3>Admin Panel</h3>
-      <ul>
-        {applications.map(app => (
-          <li key={app._id}>
-            <span>{app.name} ({app.email}) - {app.status}</span>
-            <button onClick={() => handleStatusChange(app._id, 'approved')}>Approve</button>
-            <button onClick={() => handleStatusChange(app._id, 'rejected')}>Reject</button>
-          </li>
-        ))}
-      </ul>
+    <div className="admin-dashboard">
+      <h1>Admin Dashboard</h1>
+      {message && <p className="message">{message}</p>}
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>License Number</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {applications.map(app => (
+            <tr key={app.id}>
+              <td>{app.name}</td>
+              <td>{app.email}</td>
+              <td>{app.license}</td>
+              <td>{app.status}</td>
+              <td>
+                {app.status === 'pending' && (
+                  <>
+                    <button className="approve" onClick={() => handleAction(app.id, 'approved')}>Approve</button>
+                    <button className="reject" onClick={() => handleAction(app.id, 'rejected')}>Reject</button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
 
 export default Admin;

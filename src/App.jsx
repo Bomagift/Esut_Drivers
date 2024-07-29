@@ -1,28 +1,17 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Login from '../src/Components/Login'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+// import Application from '../src/Components/Application'
 import Driver from '../src/Components/Driver';
 import Admin from '../src/Components/Admin';
+import Login from './Components/Login';
 
 function App() {
   return (
     <Router>
-      <div>
-        <header>
-          <nav>
-            <button onClick={() => window.location.href = '/'}>Home</button>
-            <button onClick={() => window.location.href = '/driver'}>Driver</button>
-            <button onClick={() => window.location.href = '/admin'}>Admin</button>
-          </nav>
-        </header>
-        <main>
-          <Switch>
-            <Route path="/" exact component={Login} />
-            <Route path="/driver" component={Driver} />
-            <Route path="/admin" component={Admin} />
-          </Switch>
-        </main>
-      </div>
+      <Routes>
+            <Route path="/" element={<Driver/>} />
+            <Route path="/admin" element={<Admin/>} />
+            <Route path="/logins" element={<Login/>} />
+            </Routes>
     </Router>
   );
 }
