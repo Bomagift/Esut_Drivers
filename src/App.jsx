@@ -9,7 +9,7 @@ function App() {
       <Routes>
             <Route path="/" element={<Login/>} />
             <Route path="/admin" element={<Admin/>} />
-            <Route path="/logins" element={<Driver/>} />
+            <Route path="/driver" element={<Driver/>} />
             </Routes>
     </Router>
   );

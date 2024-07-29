@@ -10,7 +10,7 @@ const Login = ({ onLogin }) => {
 
   const navigate = useNavigate();
   const handleDriver = () => {
-    navigate("/");
+    navigate("/driver");
   };
 
   const handleSubmit = async (e) => {
