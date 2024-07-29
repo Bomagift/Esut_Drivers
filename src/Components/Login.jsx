@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import '../index.css'; 
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -14,11 +14,26 @@ const Login = () => {
       return;
     }
 
-    if (username === 'admin' && password === 'password') {
-      setMessage('Login successful!');
-  
-    } else {
-      setMessage('Invalid username or password.');
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        setMessage('Login successful!');
+        onLogin();
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message);
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again.');
     }
   };
 
@@ -34,7 +49,6 @@ const Login = () => {
           onChange={(e) => setUsername(e.target.value)}
           required
         />
-
         <label htmlFor="password">Password:</label>
         <input
           type="password"
@@ -43,7 +57,6 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-
         <button type="submit">Login</button>
         {message && <p className="message">{message}</p>}
       </form>

@@ -1,21 +1,50 @@
-import  { useState } from 'react';
+import  { useState , useEffect } from 'react';
 import '../index.css'; 
 
-const mockApplications = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', license: 'ABC123', status: 'pending' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', license: 'XYZ789', status: 'pending' },
-
-];
-
 const Admin = () => {
-  const [applications, setApplications] = useState(mockApplications);
+  const [applications, setApplications] = useState([]);
   const [message, setMessage] = useState('');
 
-  const handleAction = (id, action) => {
-    setApplications(applications.map(app => 
-      app.id === id ? { ...app, status: action } : app
-    ));
-    setMessage(`Application ${action} successfully!`);
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/admin/applications');
+        if (response.ok) {
+          const data = await response.json();
+          setApplications(data);
+        } else {
+          setMessage('Failed to fetch applications');
+        }
+      } catch (error) {
+        setMessage('An error occurred. Please try again.');
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
+  const handleAction = async (id, action) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/admin/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, status: action }),
+      });
+
+      if (response.ok) {
+        setApplications(applications.map(app =>
+          app._id === id ? { ...app, status: action } : app
+        ));
+        setMessage(`Application ${action} successfully!`);
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.message);
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -34,7 +63,7 @@ const Admin = () => {
         </thead>
         <tbody>
           {applications.map(app => (
-            <tr key={app.id}>
+            <tr key={app._id}>
               <td>{app.name}</td>
               <td>{app.email}</td>
               <td>{app.license}</td>
@@ -42,8 +71,8 @@ const Admin = () => {
               <td>
                 {app.status === 'pending' && (
                   <>
-                    <button className="approve" onClick={() => handleAction(app.id, 'approved')}>Approve</button>
-                    <button className="reject" onClick={() => handleAction(app.id, 'rejected')}>Reject</button>
+                    <button className="approve" onClick={() => handleAction(app._id, 'approved')}>Approve</button>
+                    <button className="reject" onClick={() => handleAction(app._id, 'rejected')}>Reject</button>
                   </>
                 )}
               </td>
