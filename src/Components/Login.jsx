@@ -1,10 +1,17 @@
 import  { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import '../index.css'; 
+
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+
+  const navigate = useNavigate();
+  const handleDriver = () => {
+    navigate("/");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +64,7 @@ const Login = ({ onLogin }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" onClick={handleDriver} >Login</button>
         {message && <p className="message">{message}</p>}
       </form>
     </div>
